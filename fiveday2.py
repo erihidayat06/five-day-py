@@ -1,5 +1,7 @@
 import terminaltables
-import secrets
+import pandas as pd
+import time
+import random
 
 
 # Fungsi Menu Utama
@@ -46,6 +48,7 @@ def output_pilihan():
     print(">> Total Harga  : ", format(tothrg, ",.2f"))
 
 
+# fungsi menampilkan daftar yang di beli
 def output_beli():
     kolom = ["NO", "JENIS BAJU", "UKURAN", "HARGA", "TOTAL HARGA"]
     daftar = [
@@ -63,17 +66,49 @@ def output_beli():
     Daftar_menu.extend(daftar)
     tabel = terminaltables.AsciiTable(Daftar_menu)
     print(tabel.table)
-    return tabel.table
 
 
-def simpan(hrgsemuaitem, bayar, kembalian, output_beli):
-    hash = secrets.token_urlsafe(16)
+# fungsi menampilkan struk pembelian
+def struk():
     try:
-        with open(f"{hash}.txt", "w") as file:
-            file.write(f"{output_beli}\n")
-            file.write(f"                           Total Bayar : {hrgsemuaitem:.2f}\n")
-            file.write(f"                           Bayar       : {bayar:.2f}\n")
-            file.write(f"                           Kembalian   : {kembalian:.2f}\n")
+        noResi = random.randint(100000, 999999)
+        hrgsemuaitemp = format(hrgsemuaitem, ",.2f")
+        bayarp = format(bayar, ",.2f")
+        kembalianp = format(kembalian, ",.2f")
+        with open(f"{noResi}.txt", "w") as file:
+            menu = {
+                "Jns": listbaju,
+                "Ukr": listsemuaUkuran,
+                "Jlh": listjumlah,
+                "Hrg": listhrgsat,
+                "total": listtothrg,
+            }
+            data_menu = pd.DataFrame(menu)
+            noResi = random.randint(100000, 999999)
+            tanggal = time.strftime("%x\n")
+            waktu = time.strftime("%X\n")
+            file.write(f"\n             TOKO FIVE DAY                 \n")
+            file.write(f"           Buka : 07:00 - 16:30\n\n")
+            file.write(f"------------------------------------------\n")
+            file.write(f"No pesan : {noResi}\n")
+            file.write(f"Tanggal  : {tanggal}-{waktu}\n")
+            file.write(f"------------------------------------------\n")
+            file.write(f"{data_menu}\n")
+            file.write(f"\n\t\t\t\tTotal bayar : {hrgsemuaitemp}\n")
+            file.write(f"\t\t\t\tBayar       : {bayarp}\n")
+            file.write(f"\t\t\t\tKembalian   : {kembalianp}\n")
+
+            file.write(
+                """
+    TERIMA KASIH & SELAMAT BELANJA KEMBALI
+                INFO LENGKAP
+            W: WWW.fivedays.my.id
+                fb:Five Days
+                ig: @five_days
+        ===LAYANAN KONSUMEN FIVE DAYS===
+            VIA SMS : 085647715796
+        EMAIL: layanan@fivedays.my.id"""
+            )
     except Exception as e:
         print(f"Terjadi kesalahan: {e}")
 
@@ -111,6 +146,7 @@ listjumlah = []
 listhrgsat = []
 listtothrg = []
 
+
 iptTambah = "y"
 while iptTambah == "y":
     menu()
@@ -147,20 +183,12 @@ while iptTambah == "y":
     hrgsemuaitem = sum(listtothrg)
 
 output_beli()
-
-
-print("\n>> Total Bayar :", format(hrgsemuaitem, ",.2f"))
-bayar = int(input(">> Bayar       : "))
+print("\n\t\t\tTotal bayar :", format(hrgsemuaitem, ",.2f"))
+bayar = int(input("\t\t\tBayar       : "))
 kembalian = bayar - hrgsemuaitem
-print(">> Kembalian   :", format(kembalian, ",.2f"))
+print("\t\t\tKembalian   :", format(kembalian, ",.2f"))
 
+struk()
 
-print("\n\nPrint Struk\n")
-
-simpan(hrgsemuaitem, bayar, kembalian, output_beli())
-
-print(f"\n>> Total Bayar : {hrgsemuaitem:.2f}")
-print(f">> Bayar         : {bayar:.2f}")
-print(f">> Kembalian     : {kembalian:.2f}")
 
 iptkeluar = input("\nKetik Apa Saja Untuk Keluar : ")
